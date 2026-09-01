@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>A2B Menu</title>
+<link rel="stylesheet" href="foodapp.css"></head>
+<body>
+<header class="hero small-hero"><div><h1>A2B - Menu</h1></div></header>
+<main>
+<a class="menu-link" href="index.html">← Back</a>
+<div class="menu-list">
+<div class="menu-item"><img class="menu-img" src="images/minimeals.jpg"><div class="card-body"><h3>Mini Meals</h3><p class="price">₹120</p><button onclick="add('Mini Meals',120)">Add to Cart</button></div></div>
+<div class="menu-item"><img class="menu-img" src="images/masaladosa.jpg"><div class="card-body"><h3>Masal Dosa</h3><p class="price">₹92</p><button onclick="add('Masal Dosa',92)">Add to Cart</button></div></div>
+</div>
+<div class="cart"><h2>🛒 Cart</h2><ul id="cart"></ul><h3 id="total">Total: ₹0</h3></div>
+</main>
+<script>let c=[];function add(n,p){c.push({n,p});document.getElementById('cart').innerHTML=c.map(x=>'<li>'+x.n+' - ₹'+x.p+'</li>').join('');document.getElementById('total').textContent='Total: ₹'+c.reduce((a,x)=>a+x.p,0)}</script>
+</body></html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experiment 4 - Food Delivery</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fff8f2;
+  color: #222;
+}
+
+.hero {
+  min-height: 310px;
+  background-image: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
+                    url("images/front_images_images.jpg");
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.hero h1 { font-size: 48px; margin: 0 0 10px; }
+.hero p { font-size: 25px; margin: 0 0 10px; }
+.hero span { font-size: 17px; }
+
+.small-hero { min-height: 210px; }
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 35px 20px 60px;
+}
+
+main > h2 {
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 30px;
+}
+
+.restaurant-list, .menu-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.restaurant, .menu-item {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 5px 18px rgba(0,0,0,.12);
+}
+
+.restaurant-img, .menu-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.menu-img { height: 250px; }
+
+.card-body { padding: 18px 20px 22px; }
+.card-body h3 { margin: 0 0 8px; font-size: 23px; }
+.card-body p { margin: 0 0 12px; color: #666; }
+.price { font-weight: bold; font-size: 20px; color: #e8491d !important; }
+
+button {
+  border: none;
+  border-radius: 9px;
+  padding: 11px 17px;
+  background: #e8491d;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover { opacity: .9; }
+
+.back-btn {
+  background: transparent;
+  color: #e8491d;
+  padding: 0;
+  margin-bottom: 22px;
+  font-size: 16px;
+}
+
+.cart {
+  margin-top: 35px;
+  background: white;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.cart li { margin: 8px 0; }
+.cart h3 { margin-top: 15px; }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+  min-width: 300px;
+}
+
+.modal-content button { margin: 5px; }
+.modal-content .cancel { background: #777; }
+.success { font-size: 55px; color: green; }
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 36px; }
+  .hero p { font-size: 20px; }
+}
+
+</style>
+</head>
+<body>
+<header class="hero">
+<div><h1>Frontend4Food</h1><p>Online Food Delivery</p><span>Where Code Meets Cravings</span></div>
+</header>
+<main>
+<h2>Select a Restaurant</h2>
+<div class="restaurant-list" id="restaurantList"></div>
+<section class="cart" id="cartSection" style="display:none">
+<h2>🛒 Cart</h2><ul id="cartItems"></ul><h3 id="cartTotal">Total: ₹0</h3>
+<button onclick="placeOrder()">Place Order</button>
+</section>
+</main>
+<div id="orderModal" class="modal"><div class="modal-content"><h3>Confirm Order</h3>
+<p>Are you sure you want to place the order?</p>
+<button onclick="confirmOrder()">Yes</button><button class="cancel" onclick="closeModal()">Cancel</button></div></div>
+<div id="successModal" class="modal"><div class="modal-content"><div class="success">✔</div>
+<h3>Order Placed!</h3><p>Your order has been placed successfully.</p><button onclick="closeSuccessModal()">OK</button></div></div>
+<script>
+const restaurants = [
+{id:1,name:"A2B",description:"South Indian favourites",image:"images/minimeals.jpg",menu:[
+{id:1,name:"Mini Meals",price:120,image:"images/minimeals.jpg"},
+{id:2,name:"Masal Dosa",price:92,image:"images/masaladosa.jpg"}]},
+{id:2,name:"McD",description:"Burgers and fast food",image:"images/vegburger.jpg",menu:[
+{id:3,name:"Veggie Burger",price:199,image:"images/vegburger.jpg"},
+{id:4,name:"Chicken Pizza",price:249,image:"images/chicken_pizza.jpg"}]}
+];
+let cart=[];
+const list=document.getElementById("restaurantList");
+restaurants.forEach(r=>{
+ const d=document.createElement("div"); d.className="restaurant";
+ d.innerHTML='<img class="restaurant-img" src="'+r.image+'"><div class="card-body"><h3>'+r.name+'</h3><p>'+r.description+'</p><button>View Menu</button></div>';
+ d.querySelector("button").onclick=()=>showMenu(r);
+ list.appendChild(d);
+});
+function showMenu(r){
+ list.innerHTML="";
+ document.querySelector("main > h2").textContent=r.name+" - Menu";
+ const back=document.createElement("button"); back.className="back-btn"; back.textContent="← Back to Restaurants";
+ back.onclick=()=>location.reload(); list.before(back);
+ r.menu.forEach(i=>{
+  const d=document.createElement("div"); d.className="menu-item";
+  d.innerHTML='<img class="menu-img" src="'+i.image+'"><div class="card-body"><h3>'+i.name+'</h3><p class="price">₹'+i.price+'</p><button>Add to Cart</button></div>';
+  d.querySelector("button").onclick=()=>addToCart(i.name,i.price);
+  list.appendChild(d);
+ });
+ document.getElementById("cartSection").style.display="block";
+}
+function addToCart(n,p){cart.push({name:n,price:p});displayCart();}
+function displayCart(){const ul=document.getElementById("cartItems");ul.innerHTML="";let s=0;cart.forEach(i=>{let li=document.createElement("li");li.textContent=i.name+" - ₹"+i.price;ul.appendChild(li);s+=i.price;});document.getElementById("cartTotal").textContent="Total: ₹"+s;}
+function placeOrder(){if(!cart.length)alert("Please add your favourite food to the cart!");else document.getElementById("orderModal").style.display="flex";}
+function closeModal(){document.getElementById("orderModal").style.display="none";}
+function confirmOrder(){cart=[];displayCart();closeModal();document.getElementById("successModal").style.display="flex";}
+function closeSuccessModal(){document.getElementById("successModal").style.display="none";}
+</script>
+</body>
+</html>

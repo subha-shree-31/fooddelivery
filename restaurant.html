@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Menu</title>
+  <link rel="stylesheet" href="foodapp.css">
+</head>
+<body>
+  <header class="hero small-hero">
+    <div><h1 id="restaurantName">Restaurant Menu</h1></div>
+  </header>
+
+  <main>
+    <button class="back-btn" onclick="goHome()">← Back to Home</button>
+    <div id="menuItems" class="menu-list"></div>
+
+    <section class="cart">
+      <h2>🛒 Cart</h2>
+      <ul id="cartItems"></ul>
+      <h3 id="cartTotal">Total: ₹0</h3>
+      <button onclick="placeOrder()">Place Order</button>
+    </section>
+  </main>
+
+  <div id="orderModal" class="modal">
+    <div class="modal-content">
+      <h3>Confirm Order</h3>
+      <p>Are you sure you want to place the order?</p>
+      <button onclick="confirmOrder()">Yes</button>
+      <button class="cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="success">✔</div>
+      <h3>Order Placed!</h3>
+      <p>Your order has been placed successfully.</p>
+      <button onclick="closeSuccessModal()">OK</button>
+    </div>
+  </div>
+
+  <script src="foodapp_data.js"></script>
+  <script src="foodapp_script.js"></script>
+</body>
+</html>
