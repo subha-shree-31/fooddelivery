@@ -1,4 +1,3 @@
-// Display restaurants on the home page
 if (document.getElementById("restaurantList")) {
   const container = document.getElementById("restaurantList");
 
@@ -18,8 +17,6 @@ if (document.getElementById("restaurantList")) {
     container.appendChild(div);
   });
 }
-
-// Display menu for selected restaurant
 const params = new URLSearchParams(window.location.search);
 const rid = params.get("rid") || "1";
 
@@ -77,27 +74,4 @@ function placeOrder() {
   } else {
     document.getElementById("orderModal").style.display = "flex";
   }
-}
-
-function confirmOrder() {
-  cart = [];
-  displayCart();
-  closeModalSilently();
-  document.getElementById("successModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("orderModal").style.display = "none";
-}
-
-function closeModalSilently() {
-  document.getElementById("orderModal").style.display = "none";
-}
-
-function closeSuccessModal() {
-  document.getElementById("successModal").style.display = "none";
-}
-
-function goHome() {
-  window.location.href = "index.html";
 }
